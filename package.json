@@ -1,0 +1,30 @@
+{
+  "name": "pp-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env node index.js",
+    "dev": "cross-env nodemon index.ts",
+    "build": "tsc index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "@types/node-telegram-bot-api": "^0.53.6",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^14.2.0",
+    "node-telegram-bot-api": "^0.56.0",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1"
+  }
+}
