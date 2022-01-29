@@ -1,3 +1,4 @@
+require("dotenv").config();
 // @ts-ignore
 const mongoose = require("mongoose");
 
@@ -9,7 +10,7 @@ class Database {
     connect() {
         mongoose
             .connect(
-                "mongodb://127.0.0.1:27017/pp_bot"
+                process.env.DB
             )
             .then(() => {
                 console.log("database connection successful");
