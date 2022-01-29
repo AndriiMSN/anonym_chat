@@ -98,8 +98,8 @@ bot.on("message", async (msg: anyObject) => {
 
             const {sex} = user;
             if (
-                (sex === 'M' && menQueue.includes(msg.from.id)) ||
-                (sex === 'W' && womenQueue.includes(msg.from.id))
+                (sex === 'M' && menQueue.find(el => el.idTG === msg.from.id)) ||
+                (sex === 'W' && womenQueue.find(el => el.idTG === msg.from.id))
             ) {
                 return await bot.sendMessage(msg.from.id, messages.IN_SEARCH_CHAT);
             }
@@ -109,7 +109,7 @@ bot.on("message", async (msg: anyObject) => {
                         const woman: User | undefined = womenQueue.shift();
                         if (woman) {
                             chats[`${msg.from.id}`] = woman;
-                            chats[`${woman}`] = {
+                            chats[`${woman.idTG}`] = {
                                 idTG: msg.from.id,
                                 idMongo: user._id
                             };
@@ -120,7 +120,7 @@ bot.on("message", async (msg: anyObject) => {
                                     resize_keyboard: true
                                 }
                             });
-                            await bot.sendMessage(woman, messages.FIND_PARTNER);
+                            await bot.sendMessage(woman.idTG, messages.FIND_PARTNER);
                             return
                         } else {
                             return await bot.sendMessage(msg.from.id, messages.ERROR, {
@@ -135,7 +135,6 @@ bot.on("message", async (msg: anyObject) => {
                             idTG: msg.from.id,
                             idMongo: user._id
                         })
-                        console.log(menQueue)
                         return
                     }
 
@@ -144,7 +143,7 @@ bot.on("message", async (msg: anyObject) => {
                         const man: User | undefined = menQueue.shift();
                         if (man) {
                             chats[`${msg.from.id}`] = man;
-                            chats[`${man}`] = {
+                            chats[`${man.idTG}`] = {
                                 idTG: msg.from.id,
                                 idMongo: user._id
                             };
@@ -154,7 +153,7 @@ bot.on("message", async (msg: anyObject) => {
                                     resize_keyboard: true
                                 }
                             });
-                            await bot.sendMessage(man, messages.FIND_PARTNER, {
+                            await bot.sendMessage(man.idTG, messages.FIND_PARTNER, {
                                 reply_markup: {
                                     keyboard: reply_markup.IN_CHAT_KEYBOARD,
                                     resize_keyboard: true
