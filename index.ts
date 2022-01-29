@@ -223,6 +223,7 @@ bot.on("message", async (msg: anyObject) => {
                     resize_keyboard: true
                 }
             })
+            break;
         }
         default: {
             if (chats[`${msg.from.id}`]) {
