@@ -223,10 +223,8 @@ bot.on("message", async (msg: anyObject) => {
                     resize_keyboard: true
                 }
             })
-            break;
         }
         default: {
-            console.log(msg)
             if (chats[`${msg.from.id}`]) {
 
                 const receiver = chats[`${msg.from.id}`]
