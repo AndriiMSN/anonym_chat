@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: "chat server",
+            name: "pp_bot",
             exec_mode: "cluster",
             instances: "max",
             script: "./index.js",

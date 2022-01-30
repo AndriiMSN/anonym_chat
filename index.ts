@@ -207,12 +207,14 @@ bot.on("message", async (msg: anyObject) => {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                     resize_keyboard: true
                 })
+                return
             }
             return await bot.sendMessage(msg.from.id, messages.NOT_IN_CHAT, {
                 keyboard: reply_markup.DEFAULT_KEYBOARD,
                 resize_keyboard: true
             })
         }
+
         case (commands.GET_IN_SEARCH_ALL): {
             const inSearchString = `Бот : *Сейчас в поиске* ${menQueue.length + womenQueue.length}. *Девушек* ${womenQueue.length}. *Парней* ${menQueue.length}`
             await bot.sendMessage(msg.from.id, inSearchString, {
