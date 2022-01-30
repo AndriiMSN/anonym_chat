@@ -80,7 +80,8 @@ bot.on("message", async (msg: anyObject) => {
                 }
             })
         }
-        case (commands.SEARCH): {
+        case (commands.SEARCH):
+        case (commands.SEARCH_COMMAND): {
             if (chats[`${msg.from.id}`]) {
                 return await bot.sendMessage(msg.from.id, messages.IN_CHAT)
             }

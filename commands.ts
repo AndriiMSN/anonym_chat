@@ -1,12 +1,14 @@
 export const commands = {
-    SEARCH: "Искать собеседника",
     LEAVE_CHAT: "/leave",
-    GET_IN_SEARCH_ALL: "/get_in_search",
-    CHANGE_SEX: "/change_sex",
-    START: '/start',
     LEAVE_CHAT_DESCRIPTION: "Завершить чат",
+    SEARCH_COMMAND: "/search",
+    SEARCH_COMMAND_DESCRIPTION: "Искать собеседника",
+    GET_IN_SEARCH_ALL: "/get_in_search",
     GET_IN_SEARCH_ALL_DESCRIPTION: "К-во в очереди",
+    CHANGE_SEX: "/change_sex",
     CHANGE_SEX_DESCRIPTION: "Сменить пол",
+    START: '/start',
+    SEARCH: "Искать собеседника",
     LEAVE_CHAT_BUTTON: "Покинуть чат",
 }
 
