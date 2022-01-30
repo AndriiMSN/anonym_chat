@@ -192,11 +192,10 @@ bot.on("message", async (msg: anyObject) => {
             }
             break;
         }
-        case (commands.LEAVE_CHAT || commands.LEAVE_CHAT_BUTTON): {
+        case (commands.LEAVE_CHAT):
+        case (commands.LEAVE_CHAT_BUTTON): {
             if (chats[`${msg.from.id}`]) {
                 const partner = chats[`${msg.from.id}`].idTG
-                delete chats[partner]
-                delete chats[`${msg.from.id}`]
 
                 await bot.sendMessage(msg.from.id, messages.LEAVE_CHAT, {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
@@ -207,6 +206,10 @@ bot.on("message", async (msg: anyObject) => {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                     resize_keyboard: true
                 })
+
+                delete chats[partner]
+                delete chats[`${msg.from.id}`]
+
                 return
             }
             return await bot.sendMessage(msg.from.id, messages.NOT_IN_CHAT, {
@@ -214,7 +217,6 @@ bot.on("message", async (msg: anyObject) => {
                 resize_keyboard: true
             })
         }
-
         case (commands.GET_IN_SEARCH_ALL): {
             const inSearchString = `Бот : *Сейчас в поиске* ${menQueue.length + womenQueue.length}. *Девушек* ${womenQueue.length}. *Парней* ${menQueue.length}`
             await bot.sendMessage(msg.from.id, inSearchString, {
