@@ -49,10 +49,28 @@ bot.on("message", async (msg: anyObject) => {
     switch (text) {
         case  (commands.START): {
             if (chats[`${msg.from.id}`]) {
-                return await bot.sendMessage(msg.from.id, messages.IN_CHAT)
+                return await bot.sendMessage(msg.from.id, messages.IN_CHAT, {
+                    reply_markup: {
+                        keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                        resize_keyboard: true
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
+                })
             }
+
             let user = await Users.findOne({
                 id: {$eq: msg.from.id}
+            }).catch(async (e: any) => {
+                console.log(e)
+                return await bot.sendMessage(msg.from.id, messages.SERVER_ERROR, {
+                    reply_markup: {
+                        keyboard: reply_markup.DEFAULT_KEYBOARD,
+                        resize_keyboard: true
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
+                })
             })
 
             if (user) {
@@ -61,23 +79,36 @@ bot.on("message", async (msg: anyObject) => {
                         keyboard: reply_markup.DEFAULT_KEYBOARD,
                         resize_keyboard: true
                     }
+                }).catch((e: any) => {
+                    console.log(e)
                 })
             } else {
                 return await bot.sendMessage(msg.from.id, messages.START, {
                     reply_markup: {
                         inline_keyboard: reply_markup.START_INLINE
                     }
+                }).catch((e: any) => {
+                    console.log(e)
                 })
             }
         }
         case (commands.CHANGE_SEX): {
             if (chats[`${msg.from.id}`]) {
-                return await bot.sendMessage(msg.from.id, messages.IN_CHAT)
+                return await bot.sendMessage(msg.from.id, messages.IN_CHAT, {
+                    reply_markup: {
+                        keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                        resize_keyboard: true
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
+                })
             }
             return await bot.sendMessage(msg.from.id, messages.START_SEX, {
                 reply_markup: {
                     inline_keyboard: reply_markup.START_SEX_INLINE
                 }
+            }).catch((e: any) => {
+                console.log(e)
             })
         }
         case (commands.SEARCH):
@@ -88,12 +119,25 @@ bot.on("message", async (msg: anyObject) => {
 
             let user = await Users.findOne({
                 id: {$eq: msg.from.id}
+            }).catch(async (e: any) => {
+                console.log(e)
+                return await bot.sendMessage(msg.from.id, messages.SERVER_ERROR, {
+                    reply_markup: {
+                        keyboard: reply_markup.DEFAULT_KEYBOARD,
+                        resize_keyboard: true
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
+                })
             })
+
             if (!user || !user?.sex) {
                 return await bot.sendMessage(msg.from.id, messages.ERROR_PROFILE, {
                     reply_markup: {
                         inline_keyboard: reply_markup.START_INLINE
                     }
+                }).catch((e: any) => {
+                    console.log(e)
                 })
             }
 
@@ -102,93 +146,163 @@ bot.on("message", async (msg: anyObject) => {
                 (sex === 'M' && menQueue.find(el => el.idTG === msg.from.id)) ||
                 (sex === 'W' && womenQueue.find(el => el.idTG === msg.from.id))
             ) {
-                return await bot.sendMessage(msg.from.id, messages.IN_SEARCH_CHAT);
+                return await bot.sendMessage(msg.from.id, messages.IN_SEARCH_CHAT).catch((e: any) => {
+                    console.log(e)
+                })
             }
-            try {
-                if (sex === "M") {
-                    if (womenQueue.length > 0) {
-                        const woman: User | undefined = womenQueue.shift();
-                        if (woman) {
-                            chats[`${msg.from.id}`] = woman;
-                            chats[`${woman.idTG}`] = {
-                                idTG: msg.from.id,
-                                idMongo: user._id
-                            };
 
-                            await bot.sendMessage(msg.from.id, messages.FIND_PARTNER, {
-                                reply_markup: {
-                                    keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                                    resize_keyboard: true
-                                }
-                            });
-                            await bot.sendMessage(woman.idTG, messages.FIND_PARTNER);
-                            return
-                        } else {
-                            return await bot.sendMessage(msg.from.id, messages.ERROR, {
+            if (sex === "M") {
+
+                if (womenQueue.length > 0) {
+                    const woman: User | undefined = womenQueue.shift();
+
+                    if (woman) {
+                        chats[`${msg.from.id}`] = woman;
+                        chats[`${woman.idTG}`] = {
+                            idTG: msg.from.id,
+                            idMongo: user._id
+                        }
+
+                        await bot.sendMessage(msg.from.id, messages.FIND_PARTNER, {
+                            reply_markup: {
+                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                                resize_keyboard: true
+                            }
+                        }).catch(async (e: any) => {
+                            console.log(e)
+
+                            delete chats[`${woman.idTG}`]
+                            delete chats[`${msg.from.id}`]
+
+                            return await bot.sendMessage(woman.idTG, messages.ERROR_SEND, {
                                 reply_markup: {
                                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                                     resize_keyboard: true
                                 }
+                            }).catch((e: any) => {
+                                console.log(e)
                             })
-                        }
-                    } else if (womenQueue.length === 0) {
-                        menQueue.push({
-                            idTG: msg.from.id,
-                            idMongo: user._id
                         })
-                        return
-                    }
 
-                } else if (sex === "W") {
-                    if (menQueue.length > 0) {
-                        const man: User | undefined = menQueue.shift();
-                        if (man) {
-                            chats[`${msg.from.id}`] = man;
-                            chats[`${man.idTG}`] = {
-                                idTG: msg.from.id,
-                                idMongo: user._id
-                            };
-                            await bot.sendMessage(msg.from.id, messages.FIND_PARTNER, {
-                                reply_markup: {
-                                    keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                                    resize_keyboard: true
-                                }
-                            });
-                            await bot.sendMessage(man.idTG, messages.FIND_PARTNER, {
-                                reply_markup: {
-                                    keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                                    resize_keyboard: true
-                                }
-                            });
-                            return
-                        } else {
-                            return await bot.sendMessage(msg.from.id, messages.ERROR, {
+                        await bot.sendMessage(woman.idTG, messages.FIND_PARTNER, {
+                            reply_markup: {
+                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                                resize_keyboard: true
+                            }
+                        }).catch(async (e: any) => {
+                            console.log(e)
+
+                            delete chats[`${woman.idTG}`]
+                            delete chats[`${msg.from.id}`]
+
+                            return await bot.sendMessage(msg.from.id, messages.ERROR_SEND, {
                                 reply_markup: {
                                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                                     resize_keyboard: true
                                 }
+                            }).catch((e: any) => {
+                                console.log(e)
                             })
-                        }
-                    } else if (menQueue.length === 0) {
-                        womenQueue.push({
-                            idTG: msg.from.id,
-                            idMongo: user._id
                         })
                         return
+                    } else {
+                        return await bot.sendMessage(msg.from.id, messages.ERROR, {
+                            reply_markup: {
+                                keyboard: reply_markup.DEFAULT_KEYBOARD,
+                                resize_keyboard: true
+                            }
+                        }).catch((e: any) => {
+                            console.log(e)
+                        })
                     }
-                } else {
-                    return await bot.sendMessage(msg.from.id, messages.ERROR_PROFILE, {
-                        reply_markup: {
-                            inline_keyboard: reply_markup.START_SEX_INLINE
-                        }
+                } else if (womenQueue.length === 0) {
+                    menQueue.push({
+                        idTG: msg.from.id,
+                        idMongo: user._id
                     })
+                    return
                 }
-            } catch (e) {
-                return await bot.sendMessage(msg.from.id, messages.ERROR, {
-                    reply_markup: {
-                        keyboard: reply_markup.DEFAULT_KEYBOARD,
-                        resize_keyboard: true
+
+            } else if (sex === "W") {
+
+                if (menQueue.length > 0) {
+                    const man: User | undefined = menQueue.shift();
+
+                    if (man) {
+                        chats[`${msg.from.id}`] = man;
+                        chats[`${man.idTG}`] = {
+                            idTG: msg.from.id,
+                            idMongo: user._id
+                        };
+
+                        await bot.sendMessage(msg.from.id, messages.FIND_PARTNER, {
+                            reply_markup: {
+                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                                resize_keyboard: true
+                            }
+                        }).catch(async (e: any) => {
+                            console.log(e)
+
+                            delete chats[`${man.idTG}`]
+                            delete chats[`${msg.from.id}`]
+
+                            return await bot.sendMessage(man.idTG, messages.ERROR_SEND, {
+                                reply_markup: {
+                                    keyboard: reply_markup.DEFAULT_KEYBOARD,
+                                    resize_keyboard: true
+                                }
+                            }).catch((e: any) => {
+                                console.log(e)
+                            })
+                        })
+
+                        await bot.sendMessage(man.idTG, messages.FIND_PARTNER, {
+                            reply_markup: {
+                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                                resize_keyboard: true
+                            }
+                        }).catch(async (e: any) => {
+                            console.log(e)
+
+                            delete chats[`${man.idTG}`]
+                            delete chats[`${msg.from.id}`]
+
+                            return await bot.sendMessage(msg.from.id, messages.ERROR_SEND, {
+                                reply_markup: {
+                                    keyboard: reply_markup.DEFAULT_KEYBOARD,
+                                    resize_keyboard: true
+                                }
+                            }).catch((e: any) => {
+                                console.log(e)
+                            })
+                        })
+
+                        return
+
+                    } else {
+                        return await bot.sendMessage(msg.from.id, messages.ERROR, {
+                            reply_markup: {
+                                keyboard: reply_markup.DEFAULT_KEYBOARD,
+                                resize_keyboard: true
+                            }
+                        }).catch((e: any) => {
+                            console.log(e)
+                        })
                     }
+                } else if (menQueue.length === 0) {
+                    womenQueue.push({
+                        idTG: msg.from.id,
+                        idMongo: user._id
+                    })
+                    return
+                }
+            } else {
+                return await bot.sendMessage(msg.from.id, messages.ERROR_PROFILE, {
+                    reply_markup: {
+                        inline_keyboard: reply_markup.START_SEX_INLINE
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
                 })
             }
             break;
@@ -197,37 +311,64 @@ bot.on("message", async (msg: anyObject) => {
         case (commands.LEAVE_CHAT_BUTTON): {
             if (chats[`${msg.from.id}`]) {
                 const partner = chats[`${msg.from.id}`].idTG
+                delete chats[partner]
+                delete chats[`${msg.from.id}`]
 
                 await bot.sendMessage(msg.from.id, messages.LEAVE_CHAT, {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                     resize_keyboard: true
+                }).catch((e: any) => {
+                    console.log(e)
                 })
 
                 await bot.sendMessage(partner, messages.LEAVE_CHAT_PARTNER, {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                     resize_keyboard: true
+                }).catch((e: any) => {
+                    console.log(e)
                 })
-
-                delete chats[partner]
-                delete chats[`${msg.from.id}`]
 
                 return
             }
             return await bot.sendMessage(msg.from.id, messages.NOT_IN_CHAT, {
                 keyboard: reply_markup.DEFAULT_KEYBOARD,
                 resize_keyboard: true
+            }).catch((e: any) => {
+                console.log(e)
             })
         }
         case (commands.GET_IN_SEARCH_ALL): {
             const inSearchString = `Бот : *Сейчас в поиске* ${menQueue.length + womenQueue.length}. *Девушек* ${womenQueue.length}. *Парней* ${menQueue.length}`
-            await bot.sendMessage(msg.from.id, inSearchString, {
+            return await bot.sendMessage(msg.from.id, inSearchString, {
                 parse_mode: "Markdown",
                 reply_markup: {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                     resize_keyboard: true
                 }
+            }).catch((e: any) => {
+                console.log(e)
             })
-            break;
+        }
+        case (commands.CHECK_STATUS): {
+            if (chats[`${msg.from.id}`]) {
+                return await bot.sendMessage(msg.from.id, messages.IN_CHAT, {
+                    reply_markup: {
+                        keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                        resize_keyboard: true
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
+                })
+            } else {
+                return await bot.sendMessage(msg.from.id, messages.NOT_IN_CHAT, {
+                    reply_markup: {
+                        keyboard: reply_markup.DEFAULT_KEYBOARD,
+                        resize_keyboard: true
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
+                })
+            }
         }
         default: {
             if (chats[`${msg.from.id}`]) {
@@ -238,14 +379,51 @@ bot.on("message", async (msg: anyObject) => {
                     sender: chats[`${receiver.idTG}`].idMongo,
                     receiver: receiver.idMongo,
                     message: text
+                }).catch(async (e: any) => {
+                    console.log(e)
+                    // delete chats[`${receiver.idTG}`]
+                    // delete chats[`${msg.from.id}`]
+                    //
+                    // await bot.sendMessage(msg.from.id, "Произошла ошибка сервера, чат завершен", {
+                    //     reply_markup: {
+                    //         keyboard: reply_markup.DEFAULT_KEYBOARD,
+                    //         resize_keyboard: true
+                    //     }
+                    // }).catch((e: any) => {
+                    //     console.log(e)
+                    // })
+                    // await bot.sendMessage(receiver.idTG, "Произошла ошибка сервера, чат завершен", {
+                    //     reply_markup: {
+                    //         keyboard: reply_markup.DEFAULT_KEYBOARD,
+                    //         resize_keyboard: true
+                    //     }
+                    // }).catch((e: any) => {
+                    //     console.log(e)
+                    // })
                 })
 
-                await bot.sendMessage(receiver.idTG, text, {
-                    reply_markup: {
-                        keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                        resize_keyboard: true
-                    }
-                })
+                if (text) {
+                    await bot.sendMessage(receiver.idTG, text, {
+                        reply_markup: {
+                            keyboard: reply_markup.IN_CHAT_KEYBOARD,
+                            resize_keyboard: true
+                        }
+                    }).catch(async (e: any) => {
+                        console.log(e)
+
+                        delete chats[`${receiver.idTG}`]
+                        delete chats[`${msg.from.id}`]
+
+                        await bot.sendMessage(msg.from.id, "Произошла ошибка отправки, чат завершен", {
+                            reply_markup: {
+                                keyboard: reply_markup.DEFAULT_KEYBOARD,
+                                resize_keyboard: true
+                            }
+                        }).catch((e: any) => {
+                            console.log(e)
+                        })
+                    })
+                }
             }
             return
         }
@@ -260,6 +438,8 @@ bot.on('callback_query', async (query: any) => {
                 reply_markup: {
                     inline_keyboard: reply_markup.START_SEX_INLINE
                 }
+            }).catch((e: any) => {
+                console.log(e)
             })
         }
         case ('SET_SEX_M'): {
@@ -274,10 +454,12 @@ bot.on('callback_query', async (query: any) => {
                 new: true,
                 upsert: true
             }).catch(async (e: string) => {
-                await bot.sendMessage(query.from.id, messages.ERROR, {
+                return await bot.sendMessage(query.from.id, messages.ERROR, {
                     reply_markup: {
                         inline_keyboard: reply_markup.START_SEX_INLINE
                     }
+                }).catch((e: any) => {
+                    console.log(e)
                 })
             })
 
@@ -286,6 +468,8 @@ bot.on('callback_query', async (query: any) => {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                     resize_keyboard: true
                 }
+            }).catch((e: any) => {
+                console.log(e)
             })
         }
         case ('SET_SEX_W'): {
@@ -300,10 +484,12 @@ bot.on('callback_query', async (query: any) => {
                 new: true,
                 upsert: true
             }).catch(async () => {
-                await bot.sendMessage(query.from.id, messages.ERROR, {
+                return await bot.sendMessage(query.from.id, messages.ERROR, {
                     reply_markup: {
                         inline_keyboard: reply_markup.START_SEX_INLINE
                     }
+                }).catch((e: any) => {
+                    console.log(e)
                 })
             })
 
@@ -312,6 +498,8 @@ bot.on('callback_query', async (query: any) => {
                     keyboard: reply_markup.DEFAULT_KEYBOARD,
                     resize_keyboard: true
                 }
+            }).catch((e: any) => {
+                console.log(e)
             })
         }
     }

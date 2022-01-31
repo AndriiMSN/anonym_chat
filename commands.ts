@@ -1,4 +1,6 @@
 export const commands = {
+    CHECK_STATUS:"/check",
+    CHECK_STATUS_DESCRIPTION:"Статус в чате или нет",
     LEAVE_CHAT: "/leave",
     LEAVE_CHAT_DESCRIPTION: "Завершить чат",
     SEARCH_COMMAND: "/search",
@@ -35,5 +37,7 @@ export const messages = {
     IN_CHAT: "Бот: Вы сейчас в чате",
     LEAVE_CHAT: "Бот: Вы завершили чат",
     LEAVE_CHAT_PARTNER: "Бот: Собеседник завершил чат",
-    NOT_IN_CHAT: "Бот : Вы не в чате"
+    NOT_IN_CHAT: "Бот : Вы не в чате",
+    SERVER_ERROR: "Бот : Произошла ошибка сервера",
+    ERROR_SEND: "Бот : Произошла ошибка, чат завершен",
 }
