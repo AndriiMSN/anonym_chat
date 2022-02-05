@@ -195,7 +195,11 @@ bot.on("message", async (msg: anyObject) => {
                         idTG: msg.from.id,
                         idMongo: user._id
                     })
-                    return
+                    return bot
+                        .sendMessage(msg.from.id, "Вы встали в очередь")
+                        .catch((e: any) => {
+                            console.log(e)
+                        })
                 }
 
             } else if (sex === "W") {
@@ -254,7 +258,11 @@ bot.on("message", async (msg: anyObject) => {
                         idTG: msg.from.id,
                         idMongo: user._id
                     })
-                    return
+                    return bot
+                        .sendMessage(msg.from.id, "Вы встали в очередь")
+                        .catch((e: any) => {
+                            console.log(e)
+                        })
                 }
             } else {
                 return await bot
