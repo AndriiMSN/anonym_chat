@@ -49,96 +49,84 @@ bot.on("message", async (msg: anyObject) => {
     switch (text) {
         case  (commands.START): {
             if (chats[`${msg.from.id}`]) {
-                return await bot.sendMessage(msg.from.id, messages.IN_CHAT, {
-                    reply_markup: {
-                        keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                        resize_keyboard: true
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.IN_CHAT)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
             }
 
             let user = await Users.findOne({
                 id: {$eq: msg.from.id}
             }).catch(async (e: any) => {
                 console.log(e)
-                return await bot.sendMessage(msg.from.id, messages.SERVER_ERROR, {
-                    reply_markup: {
-                        keyboard: reply_markup.DEFAULT_KEYBOARD,
-                        resize_keyboard: true
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.SERVER_ERROR)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
             })
 
             if (user) {
-                return await bot.sendMessage(msg.from.id, messages.START_USER, {
-                    reply_markup: {
-                        keyboard: reply_markup.DEFAULT_KEYBOARD,
-                        resize_keyboard: true
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.START_USER)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
             } else {
-                return await bot.sendMessage(msg.from.id, messages.START, {
-                    reply_markup: {
-                        inline_keyboard: reply_markup.START_INLINE
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.START, {
+                        reply_markup: {
+                            inline_keyboard: reply_markup.START_INLINE
+                        }
+                    }).catch((e: any) => {
+                        console.log(e)
+                    })
             }
         }
         case (commands.CHANGE_SEX): {
             if (chats[`${msg.from.id}`]) {
-                return await bot.sendMessage(msg.from.id, messages.IN_CHAT, {
+                return await bot
+                    .sendMessage(msg.from.id, messages.IN_CHAT)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
+            }
+            return await bot
+                .sendMessage(msg.from.id, messages.START_SEX, {
                     reply_markup: {
-                        keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                        resize_keyboard: true
+                        inline_keyboard: reply_markup.START_SEX_INLINE
                     }
                 }).catch((e: any) => {
                     console.log(e)
                 })
-            }
-            return await bot.sendMessage(msg.from.id, messages.START_SEX, {
-                reply_markup: {
-                    inline_keyboard: reply_markup.START_SEX_INLINE
-                }
-            }).catch((e: any) => {
-                console.log(e)
-            })
         }
-        case (commands.SEARCH):
         case (commands.SEARCH_COMMAND): {
             if (chats[`${msg.from.id}`]) {
-                return await bot.sendMessage(msg.from.id, messages.IN_CHAT)
+                return await bot
+                    .sendMessage(msg.from.id, messages.IN_CHAT)
             }
 
             let user = await Users.findOne({
                 id: {$eq: msg.from.id}
             }).catch(async (e: any) => {
                 console.log(e)
-                return await bot.sendMessage(msg.from.id, messages.SERVER_ERROR, {
-                    reply_markup: {
-                        keyboard: reply_markup.DEFAULT_KEYBOARD,
-                        resize_keyboard: true
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.SERVER_ERROR)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
             })
 
             if (!user || !user?.sex) {
-                return await bot.sendMessage(msg.from.id, messages.ERROR_PROFILE, {
-                    reply_markup: {
-                        inline_keyboard: reply_markup.START_INLINE
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.ERROR_PROFILE, {
+                        reply_markup: {
+                            inline_keyboard: reply_markup.START_INLINE
+                        }
+                    }).catch((e: any) => {
+                        console.log(e)
+                    })
             }
 
             const {sex} = user;
@@ -146,9 +134,11 @@ bot.on("message", async (msg: anyObject) => {
                 (sex === 'M' && menQueue.find(el => el.idTG === msg.from.id)) ||
                 (sex === 'W' && womenQueue.find(el => el.idTG === msg.from.id))
             ) {
-                return await bot.sendMessage(msg.from.id, messages.IN_SEARCH_CHAT).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.IN_SEARCH_CHAT)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
             }
 
             if (sex === "M") {
@@ -163,57 +153,42 @@ bot.on("message", async (msg: anyObject) => {
                             idMongo: user._id
                         }
 
-                        await bot.sendMessage(msg.from.id, messages.FIND_PARTNER, {
-                            reply_markup: {
-                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                                resize_keyboard: true
-                            }
-                        }).catch(async (e: any) => {
-                            console.log(e)
-
-                            delete chats[`${woman.idTG}`]
-                            delete chats[`${msg.from.id}`]
-
-                            return await bot.sendMessage(woman.idTG, messages.ERROR_SEND, {
-                                reply_markup: {
-                                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                                    resize_keyboard: true
-                                }
-                            }).catch((e: any) => {
+                        await bot
+                            .sendMessage(msg.from.id, messages.FIND_PARTNER)
+                            .catch(async (e: any) => {
                                 console.log(e)
+
+                                delete chats[`${woman.idTG}`]
+                                delete chats[`${msg.from.id}`]
+
+                                return await bot
+                                    .sendMessage(woman.idTG, messages.ERROR_SEND)
+                                    .catch((e: any) => {
+                                        console.log(e)
+                                    })
                             })
-                        })
 
-                        await bot.sendMessage(woman.idTG, messages.FIND_PARTNER, {
-                            reply_markup: {
-                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                                resize_keyboard: true
-                            }
-                        }).catch(async (e: any) => {
-                            console.log(e)
-
-                            delete chats[`${woman.idTG}`]
-                            delete chats[`${msg.from.id}`]
-
-                            return await bot.sendMessage(msg.from.id, messages.ERROR_SEND, {
-                                reply_markup: {
-                                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                                    resize_keyboard: true
-                                }
-                            }).catch((e: any) => {
+                        await bot
+                            .sendMessage(woman.idTG, messages.FIND_PARTNER)
+                            .catch(async (e: any) => {
                                 console.log(e)
+
+                                delete chats[`${woman.idTG}`]
+                                delete chats[`${msg.from.id}`]
+
+                                return await bot
+                                    .sendMessage(msg.from.id, messages.ERROR_SEND)
+                                    .catch((e: any) => {
+                                        console.log(e)
+                                    })
                             })
-                        })
                         return
                     } else {
-                        return await bot.sendMessage(msg.from.id, messages.ERROR, {
-                            reply_markup: {
-                                keyboard: reply_markup.DEFAULT_KEYBOARD,
-                                resize_keyboard: true
-                            }
-                        }).catch((e: any) => {
-                            console.log(e)
-                        })
+                        return await bot
+                            .sendMessage(msg.from.id, messages.ERROR)
+                            .catch((e: any) => {
+                                console.log(e)
+                            })
                     }
                 } else if (womenQueue.length === 0) {
                     menQueue.push({
@@ -235,59 +210,44 @@ bot.on("message", async (msg: anyObject) => {
                             idMongo: user._id
                         };
 
-                        await bot.sendMessage(msg.from.id, messages.FIND_PARTNER, {
-                            reply_markup: {
-                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                                resize_keyboard: true
-                            }
-                        }).catch(async (e: any) => {
-                            console.log(e)
-
-                            delete chats[`${man.idTG}`]
-                            delete chats[`${msg.from.id}`]
-
-                            return await bot.sendMessage(man.idTG, messages.ERROR_SEND, {
-                                reply_markup: {
-                                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                                    resize_keyboard: true
-                                }
-                            }).catch((e: any) => {
+                        await bot
+                            .sendMessage(msg.from.id, messages.FIND_PARTNER)
+                            .catch(async (e: any) => {
                                 console.log(e)
+
+                                delete chats[`${man.idTG}`]
+                                delete chats[`${msg.from.id}`]
+
+                                return await bot
+                                    .sendMessage(man.idTG, messages.ERROR_SEND)
+                                    .catch((e: any) => {
+                                        console.log(e)
+                                    })
                             })
-                        })
 
-                        await bot.sendMessage(man.idTG, messages.FIND_PARTNER, {
-                            reply_markup: {
-                                keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                                resize_keyboard: true
-                            }
-                        }).catch(async (e: any) => {
-                            console.log(e)
-
-                            delete chats[`${man.idTG}`]
-                            delete chats[`${msg.from.id}`]
-
-                            return await bot.sendMessage(msg.from.id, messages.ERROR_SEND, {
-                                reply_markup: {
-                                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                                    resize_keyboard: true
-                                }
-                            }).catch((e: any) => {
+                        await bot
+                            .sendMessage(man.idTG, messages.FIND_PARTNER)
+                            .catch(async (e: any) => {
                                 console.log(e)
+
+                                delete chats[`${man.idTG}`]
+                                delete chats[`${msg.from.id}`]
+
+                                return await bot
+                                    .sendMessage(msg.from.id, messages.ERROR_SEND)
+                                    .catch((e: any) => {
+                                        console.log(e)
+                                    })
                             })
-                        })
 
                         return
 
                     } else {
-                        return await bot.sendMessage(msg.from.id, messages.ERROR, {
-                            reply_markup: {
-                                keyboard: reply_markup.DEFAULT_KEYBOARD,
-                                resize_keyboard: true
-                            }
-                        }).catch((e: any) => {
-                            console.log(e)
-                        })
+                        return await bot
+                            .sendMessage(msg.from.id, messages.ERROR)
+                            .catch((e: any) => {
+                                console.log(e)
+                            })
                     }
                 } else if (menQueue.length === 0) {
                     womenQueue.push({
@@ -297,78 +257,82 @@ bot.on("message", async (msg: anyObject) => {
                     return
                 }
             } else {
-                return await bot.sendMessage(msg.from.id, messages.ERROR_PROFILE, {
-                    reply_markup: {
-                        inline_keyboard: reply_markup.START_SEX_INLINE
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.ERROR_PROFILE, {
+                        reply_markup: {
+                            inline_keyboard: reply_markup.START_SEX_INLINE
+                        }
+                    }).catch((e: any) => {
+                        console.log(e)
+                    })
             }
             break;
         }
-        case (commands.LEAVE_CHAT):
-        case (commands.LEAVE_CHAT_BUTTON): {
+        case (commands.LEAVE_CHAT): {
             if (chats[`${msg.from.id}`]) {
                 const partner = chats[`${msg.from.id}`].idTG
                 delete chats[partner]
                 delete chats[`${msg.from.id}`]
 
-                await bot.sendMessage(msg.from.id, messages.LEAVE_CHAT, {
-                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                    resize_keyboard: true
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                await bot
+                    .sendMessage(msg.from.id, messages.LEAVE_CHAT)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
 
-                await bot.sendMessage(partner, messages.LEAVE_CHAT_PARTNER, {
-                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                    resize_keyboard: true
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                await bot
+                    .sendMessage(partner, messages.LEAVE_CHAT_PARTNER)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
 
                 return
             }
-            return await bot.sendMessage(msg.from.id, messages.NOT_IN_CHAT, {
-                keyboard: reply_markup.DEFAULT_KEYBOARD,
-                resize_keyboard: true
-            }).catch((e: any) => {
-                console.log(e)
-            })
+            return await bot
+                .sendMessage(msg.from.id, messages.NOT_IN_CHAT)
+                .catch((e: any) => {
+                    console.log(e)
+                })
         }
         case (commands.GET_IN_SEARCH_ALL): {
-            const inSearchString = `Бот : *Сейчас в поиске* ${menQueue.length + womenQueue.length}. *Девушек* ${womenQueue.length}. *Парней* ${menQueue.length}`
-            return await bot.sendMessage(msg.from.id, inSearchString, {
-                parse_mode: "Markdown",
-                reply_markup: {
-                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                    resize_keyboard: true
-                }
-            }).catch((e: any) => {
-                console.log(e)
-            })
+            const inSearchString = `
+            Бот : *Сейчас в поиске* ${menQueue.length + womenQueue.length}. 
+            *Девушек* ${womenQueue.length}. 
+            *Парней* ${menQueue.length}`
+            return await bot
+                .sendMessage(msg.from.id, inSearchString)
+                .catch((e: any) => {
+                    console.log(e)
+                })
         }
         case (commands.CHECK_STATUS): {
             if (chats[`${msg.from.id}`]) {
-                return await bot.sendMessage(msg.from.id, messages.IN_CHAT, {
-                    reply_markup: {
-                        keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                        resize_keyboard: true
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(msg.from.id, messages.IN_CHAT)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
             } else {
-                return await bot.sendMessage(msg.from.id, messages.NOT_IN_CHAT, {
-                    reply_markup: {
-                        keyboard: reply_markup.DEFAULT_KEYBOARD,
-                        resize_keyboard: true
-                    }
-                }).catch((e: any) => {
+                return await bot
+                    .sendMessage(msg.from.id, messages.NOT_IN_CHAT)
+                    .catch((e: any) => {
+                        console.log(e)
+                    })
+            }
+        }
+        case(commands.HELP): {
+            const help = Object.keys(commands).reduce((accum: string, item) => {
+                if (/^\//.test(commands[`${item}`])) {
+                    accum += commands[`${item}`] + ' ' + (commands[`${item}_DESCRIPTION`] || '') + '\n';
+                }
+                return accum
+            }, '')
+
+            return await bot
+                .sendMessage(msg.from.id, help)
+                .catch((e: any) => {
                     console.log(e)
                 })
-            }
         }
         default: {
             if (chats[`${msg.from.id}`]) {
@@ -403,26 +367,20 @@ bot.on("message", async (msg: anyObject) => {
                 })
 
                 if (text) {
-                    await bot.sendMessage(receiver.idTG, text, {
-                        reply_markup: {
-                            keyboard: reply_markup.IN_CHAT_KEYBOARD,
-                            resize_keyboard: true
-                        }
-                    }).catch(async (e: any) => {
-                        console.log(e)
-
-                        delete chats[`${receiver.idTG}`]
-                        delete chats[`${msg.from.id}`]
-
-                        await bot.sendMessage(msg.from.id, "Произошла ошибка отправки, чат завершен", {
-                            reply_markup: {
-                                keyboard: reply_markup.DEFAULT_KEYBOARD,
-                                resize_keyboard: true
-                            }
-                        }).catch((e: any) => {
+                    await bot
+                        .sendMessage(receiver.idTG, text)
+                        .catch(async (e: any) => {
                             console.log(e)
+
+                            delete chats[`${receiver.idTG}`]
+                            delete chats[`${msg.from.id}`]
+
+                            await bot
+                                .sendMessage(msg.from.id, messages.ERROR_SEND)
+                                .catch((e: any) => {
+                                    console.log(e)
+                                })
                         })
-                    })
                 }
             }
             return
@@ -434,13 +392,14 @@ bot.on("message", async (msg: anyObject) => {
 bot.on('callback_query', async (query: any) => {
     switch (query.data) {
         case ('CREATE_PROFILE'): {
-            return await bot.sendMessage(query.from.id, messages.START_SEX, {
-                reply_markup: {
-                    inline_keyboard: reply_markup.START_SEX_INLINE
-                }
-            }).catch((e: any) => {
-                console.log(e)
-            })
+            return await bot
+                .sendMessage(query.from.id, messages.START_SEX, {
+                    reply_markup: {
+                        inline_keyboard: reply_markup.START_SEX_INLINE
+                    }
+                }).catch((e: any) => {
+                    console.log(e)
+                })
         }
         case ('SET_SEX_M'): {
             await Users.findOneAndUpdate({
@@ -454,23 +413,21 @@ bot.on('callback_query', async (query: any) => {
                 new: true,
                 upsert: true
             }).catch(async (e: string) => {
-                return await bot.sendMessage(query.from.id, messages.ERROR, {
-                    reply_markup: {
-                        inline_keyboard: reply_markup.START_SEX_INLINE
-                    }
-                }).catch((e: any) => {
-                    console.log(e)
-                })
+                return await bot
+                    .sendMessage(query.from.id, messages.SERVER_ERROR, {
+                        reply_markup: {
+                            inline_keyboard: reply_markup.START_SEX_INLINE
+                        }
+                    }).catch((e: any) => {
+                        console.log(e)
+                    })
             })
 
-            return await bot.sendMessage(query.from.id, `Ваш пол - 'Мужской', введите комманду ${commands.CHANGE_SEX}, что бы сменить пол`, {
-                reply_markup: {
-                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                    resize_keyboard: true
-                }
-            }).catch((e: any) => {
-                console.log(e)
-            })
+            return await bot
+                .sendMessage(query.from.id, messages.SEX_M)
+                .catch((e: any) => {
+                    console.log(e)
+                })
         }
         case ('SET_SEX_W'): {
             await Users.findOneAndUpdate({
@@ -484,7 +441,7 @@ bot.on('callback_query', async (query: any) => {
                 new: true,
                 upsert: true
             }).catch(async () => {
-                return await bot.sendMessage(query.from.id, messages.ERROR, {
+                return await bot.sendMessage(query.from.id, messages.SERVER_ERROR, {
                     reply_markup: {
                         inline_keyboard: reply_markup.START_SEX_INLINE
                     }
@@ -493,14 +450,11 @@ bot.on('callback_query', async (query: any) => {
                 })
             })
 
-            return await bot.sendMessage(query.from.id, `Ваш пол - 'Женский', введите комманду ${commands.CHANGE_SEX}, что бы сменить пол`, {
-                reply_markup: {
-                    keyboard: reply_markup.DEFAULT_KEYBOARD,
-                    resize_keyboard: true
-                }
-            }).catch((e: any) => {
-                console.log(e)
-            })
+            return await bot
+                .sendMessage(query.from.id, messages.SEX_W)
+                .catch((e: any) => {
+                    console.log(e)
+                })
         }
     }
 })

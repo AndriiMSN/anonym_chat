@@ -1,6 +1,6 @@
 export const commands = {
-    CHECK_STATUS:"/check",
-    CHECK_STATUS_DESCRIPTION:"Статус в чате или нет",
+    CHECK_STATUS: "/check",
+    CHECK_STATUS_DESCRIPTION: "Статус в чате или нет",
     LEAVE_CHAT: "/leave",
     LEAVE_CHAT_DESCRIPTION: "Завершить чат",
     SEARCH_COMMAND: "/search",
@@ -9,9 +9,10 @@ export const commands = {
     GET_IN_SEARCH_ALL_DESCRIPTION: "К-во в очереди",
     CHANGE_SEX: "/change_sex",
     CHANGE_SEX_DESCRIPTION: "Сменить пол",
+    HELP: "/help",
+    HELP_DESCRIPTION: "Список команд",
     START: '/start',
-    SEARCH: "Искать собеседника",
-    LEAVE_CHAT_BUTTON: "Покинуть чат",
+    START_DESCRIPTION: 'start',
 }
 
 export const reply_markup = {
@@ -22,22 +23,22 @@ export const reply_markup = {
         [{text: 'Я парень', callback_data: 'SET_SEX_M',}],
         [{text: 'Я девушка', callback_data: 'SET_SEX_W',}]
     ],
-    DEFAULT_KEYBOARD: [[commands.SEARCH]],
-    IN_CHAT_KEYBOARD: [[commands.LEAVE_CHAT_BUTTON]]
 }
 
 export const messages = {
-    START: "Бот: Давайте создадим профиль",
-    START_USER: "Бот : Привет",
-    START_SEX: "Бот: Выберите пол",
-    FIND_PARTNER: "Бот: Собеседник найден",
-    ERROR: "Бот: Попробуйте еще раз, произошла ошибка... упс",
+    ERROR: `Бот: Попробуйте еще раз, произошла ошибка... упс ${commands.SEARCH_COMMAND} - ${commands.SEARCH_COMMAND_DESCRIPTION}`,
     ERROR_PROFILE: "Бот: Профиль не заполнен...",
+    ERROR_SEND: `Бот : Произошла ошибка, чат завершен.  ${commands.SEARCH_COMMAND} - ${commands.SEARCH_COMMAND_DESCRIPTION}`,
+    FIND_PARTNER: `Бот: Собеседник найден. ${commands.LEAVE_CHAT} - ${commands.LEAVE_CHAT_DESCRIPTION}`,
+    IN_CHAT: `Бот: Вы сейчас в чате. ${commands.LEAVE_CHAT} - ${commands.LEAVE_CHAT_DESCRIPTION}`,
     IN_SEARCH_CHAT: "Бот: Вы уже в очереди",
-    IN_CHAT: "Бот: Вы сейчас в чате",
-    LEAVE_CHAT: "Бот: Вы завершили чат",
-    LEAVE_CHAT_PARTNER: "Бот: Собеседник завершил чат",
-    NOT_IN_CHAT: "Бот : Вы не в чате",
-    SERVER_ERROR: "Бот : Произошла ошибка сервера",
-    ERROR_SEND: "Бот : Произошла ошибка, чат завершен",
+    LEAVE_CHAT: `Бот: Вы завершили чат. ${commands.SEARCH_COMMAND} - ${commands.SEARCH_COMMAND_DESCRIPTION}`,
+    LEAVE_CHAT_PARTNER: `Бот: Собеседник завершил чат. ${commands.SEARCH_COMMAND} - ${commands.SEARCH_COMMAND_DESCRIPTION}`,
+    NOT_IN_CHAT: `Бот : Вы не в чате  ${commands.SEARCH_COMMAND} - ${commands.SEARCH_COMMAND_DESCRIPTION}`,
+    SERVER_ERROR: "Бот : Произошла ошибка сервера, сообщите @podslushano_pokrovsk_bot",
+    SEX_M: `Ваш пол - 'Мужской', введите комманду ${commands.CHANGE_SEX}, что бы сменить пол`,
+    SEX_W: `Ваш пол - 'Женский', введите комманду ${commands.CHANGE_SEX}, что бы сменить пол`,
+    START: "Бот: Давайте создадим профиль",
+    START_SEX: "Бот: Выберите пол",
+    START_USER: `Бот : Привет ${commands.HELP} - ${commands.HELP_DESCRIPTION}`,
 }
